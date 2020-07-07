@@ -1,18 +1,25 @@
 import spawn from 'cross-spawn'
 import fs from 'fs'
 
-import { paths } from '../constants'
+import { MOULD_VERSION, paths } from '../constants'
 
 if (!fs.existsSync(paths.mould.directory)) {
     fs.mkdirSync(paths.mould.directory)
 }
 
-const version = 'MVP'
-const fileName = `${version}.zip`
-const url = `https://github.com/mouldjs/mould/archive/${fileName}`
+const zipFile = `${MOULD_VERSION}.zip`
+const url = `https://github.com/mouldjs/mould/archive/${zipFile}`
 
 spawn(
     'bash',
-    ['-c', `cd ${paths.mould.directory} && curl -LOkSs ${url} && unzip ${fileName} && rm ${fileName}`],
+    [
+        '-c',
+        [
+            `cd ${paths.mould.directory}`,
+            `curl -LOkSs ${url}`,
+            `unzip ${zipFile} -d ${MOULD_VERSION}`,
+            `rm ${zipFile}`
+        ].join(' && ')
+    ],
     { stdio: 'inherit' }
 )
