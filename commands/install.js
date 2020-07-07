@@ -15,7 +15,7 @@ if (!fs.existsSync(paths.mould.directory)) {
 const zipFile = `${MOULD_VERSION}.zip`
 const url = `https://github.com/mouldjs/mould/archive/${zipFile}`
 
-spawn(
+const result = spawn.sync(
     'bash',
     [
         '-c',
@@ -28,3 +28,7 @@ spawn(
     ],
     { stdio: 'inherit' }
 )
+
+if (result.status === 0) {
+    console.info(`\nInstalled mould@${MOULD_VERSION} successfully.`)
+}
