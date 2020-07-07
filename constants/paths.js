@@ -2,6 +2,8 @@ import fs from 'fs'
 import os from 'os'
 import path from 'path'
 
+import { MOULD_VERSION } from '../constants'
+
 const appDirectory = process.cwd()
 const cliDirectory = path.join(__dirname, '..')
 const mouldDirectory = path.join(os.homedir(), '.mould')
@@ -28,6 +30,7 @@ export const cli = {
 
 export const mould = {
     directory: mouldDirectory,
+    byVersionDirectory: resolveMould(MOULD_VERSION),
 }
 
 export const bin = {
