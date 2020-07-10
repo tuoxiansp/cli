@@ -10,7 +10,7 @@ const mouldDirectory = path.join(os.homedir(), '.mould')
 
 const resolveApp = (relativePath) => path.resolve(appDirectory, relativePath)
 const resolveCli = (relativePath) => path.resolve(cliDirectory, relativePath)
-const resolveMould = (relativePath) => path.resolve(mouldDirectory, relativePath)
+const resolveMould = (relativePath) => path.resolve(mouldDirectory, MOULD_VERSION, relativePath)
 
 const useTs = fs.existsSync(resolveApp('tsconfig.json'))
 
@@ -30,7 +30,8 @@ export const cli = {
 
 export const mould = {
     directory: mouldDirectory,
-    byVersionDirectory: resolveMould(MOULD_VERSION),
+    byVersionDirectory: resolveMould('.'),
+    transform: resolveMould('compile/transform'),
 }
 
 export const bin = {
