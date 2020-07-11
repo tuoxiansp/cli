@@ -51,12 +51,12 @@ function build() {
 }
 
 function symlinkMould() {
-    if (fs.existsSync(paths.cli.symlinkDirectory)) {
-        fs.unlinkSync(paths.cli.symlinkDirectory)
+    if (fs.existsSync(paths.mould.symlinkDirectory)) {
+        fs.unlinkSync(paths.mould.symlinkDirectory)
     }
     fs.symlinkSync(
         paths.app.mouldDirectory,
-        paths.cli.symlinkDirectory,
+        paths.mould.symlinkDirectory,
         'dir'
     )
 }

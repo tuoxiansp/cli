@@ -25,12 +25,12 @@ export const cli = {
     directory: cliDirectory,
     componentsDirectory: resolveCli('.components'),
     components: resolveCli('.components/index.tsx'),
-    symlinkDirectory: resolveCli('.mould'),
 }
 
 export const mould = {
     directory: mouldDirectory,
     byVersionDirectory: resolveMould('.'),
+    symlinkDirectory: resolveMould('.mould'),
     transform: resolveMould('compile/transform'),
 }
 
