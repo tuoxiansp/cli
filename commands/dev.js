@@ -1,53 +1,74 @@
+import chalk from 'chalk'
 import spawn from 'cross-spawn'
 import fs from 'fs'
-import { debounce } from 'debounce'
+import fse from 'fs-extra'
+import debounce from 'lodash.debounce'
 import path from 'path'
 
-import { compileSchema, compileTs } from '../compilers'
 import { paths } from '../constants'
 import {
-    copyByExtension, copyByExtensionWithExtensionReplacement, existsSyncWithExtension
+    copyByExtension,
+    copyByExtensionWithExtensionReplacement,
+    existsSyncWithExtension,
 } from '../utils'
 
-;(async function dev() {
-    if (fs.existsSync(paths.app.mouldDirectory)) {
-        try {
-            await build()
-            symlinkMould()
-            runEditor()
-            watchTs()
-            watchMould()
-        } catch (error) {
-            console.error('Failed to run Mould in development\n' + error)
-        }
-    } else {
-        console.warn(
-            `You don't have ${path.basename(paths.app.mouldDirectory)} ` +
-            `initialized at ${paths.app.directory}\n\n` +
+if (!fs.existsSync(paths.editor.byVersionDirectory)) {
+    console.warn(
+        `You don't have Mould installed.\n\n` +
+            'To install Mould just type:\n\n' +
+            `  ${chalk.cyan('npx mould install')}\n`
+    )
+    process.exit(1)
+}
+if (!fs.existsSync(paths.app.mouldDirectory)) {
+    console.warn(
+        `You don't have ${chalk.green(
+            path.basename(paths.app.mouldDirectory)
+        )} initialized at ${chalk.green(paths.app.directory)}\n\n` +
             'You could start by typing:\n\n' +
-            '  npx mould init\n'
-        )
+            `  ${chalk.cyan('npx mould init')}\n`
+    )
+    process.exit(1)
+}
+
+;(async function dev() {
+    try {
+        copyMould()
+        symlinkMould()
+        await build()
+        runEditor()
+        watchTs()
+        watchMould()
+    } catch (error) {
+        console.error('Failed to run Mould in development\n' + error)
     }
 })()
 
 function build() {
     return Promise.all([
         fs.existsSync(paths.app.schema) &&
-            compileSchema(paths.app.schema, paths.cli.components),
+            require('./compile').compileSchema(
+                paths.app.schema,
+                paths.mould.components
+            ),
         existsSyncWithExtension(paths.app.mouldDirectory, '.ts') &&
             copyByExtension(
                 paths.app.mouldDirectory,
-                paths.cli.componentsDirectory,
+                paths.mould.componentsDirectory,
                 '.ts'
             ),
         existsSyncWithExtension(paths.app.mouldDirectory, '.js') &&
             copyByExtensionWithExtensionReplacement(
                 paths.app.mouldDirectory,
-                paths.cli.componentsDirectory,
+                paths.mould.componentsDirectory,
                 '.js',
                 '.ts'
             ),
-    ]).then(compileTs)
+    ]).then(require('./compile').compileTs)
+}
+
+function copyMould() {
+    fse.copySync(paths.app.mouldDirectory, paths.editor.symlinkDirectory)
 }
 
 function symlinkMould() {
@@ -62,9 +83,9 @@ function symlinkMould() {
 }
 
 function runEditor() {
-    const cdToMouldDir = `cd ${paths.mould.byVersionDirectory}`
+    const cdToAppDir = `cd ${paths.editor.byVersionDirectory}`
     const setWorkdirEnvVar = `WORKDIR=${paths.app.mouldDirectory}`
-    const runNextDev = `${paths.bin.next} dev`
+    const runNextDev = `${paths.bin.next} dev -p 5005`
 
     if (
         process.platform === 'win32' ||
@@ -73,13 +94,13 @@ function runEditor() {
     ) {
         spawn(
             'cmd.exe',
-            ['/c', `${cdToMouldDir} && set ${setWorkdirEnvVar} && ${runNextDev}`],
+            ['/c', `${cdToAppDir} && set ${setWorkdirEnvVar} && ${runNextDev}`],
             { stdio: 'inherit' }
         )
     } else {
         spawn(
             'bash',
-            ['-c', `${cdToMouldDir} && ${setWorkdirEnvVar} ${runNextDev}`],
+            ['-c', `${cdToAppDir} && ${setWorkdirEnvVar} ${runNextDev}`],
             { stdio: 'inherit' }
         )
     }
@@ -88,7 +109,7 @@ function runEditor() {
 function watchTs() {
     spawn(
         paths.bin.tsc,
-        ['-p', path.join(__dirname, '..', 'compilers', 'tsconfig.json'), '--watch'],
+        ['-p', path.join(__dirname, 'tsconfig.components.json'), '--watch'],
         { stdio: 'inherit' }
     )
 }
@@ -101,16 +122,19 @@ function watchMould() {
                 return
             }
 
+            copyMould()
+
             if (filename.startsWith(path.basename(paths.app.schema))) {
                 const compileSchemaTime = process.hrtime()
 
-                compileSchema(paths.app.schema, paths.cli.components)
+                require('./compile')
+                    .compileSchema(paths.app.schema, paths.mould.components)
                     .then(() => {
                         const [s, ns] = process.hrtime(compileSchemaTime)
 
                         console.log(
                             'Compiled Mould Schema successfully ' +
-                            `in ${s}s ${ns / 1e6}ms`
+                                `in ${s}s ${ns / 1e6}ms`
                         )
                     })
                     .catch((error) => {
@@ -123,7 +147,7 @@ function watchMould() {
 
                 copyByExtension(
                     paths.app.mouldDirectory,
-                    paths.cli.componentsDirectory,
+                    paths.mould.componentsDirectory,
                     '.ts'
                 )
                     .then(() => {
@@ -131,7 +155,7 @@ function watchMould() {
 
                         console.log(
                             'Copied TypeScript successfully ' +
-                            `in ${s}s ${ns / 1e6}ms`
+                                `in ${s}s ${ns / 1e6}ms`
                         )
                     })
                     .catch((error) => {
@@ -142,7 +166,7 @@ function watchMould() {
 
                 copyByExtensionWithExtensionReplacement(
                     paths.app.mouldDirectory,
-                    paths.cli.componentsDirectory,
+                    paths.mould.componentsDirectory,
                     '.js',
                     '.ts'
                 )
@@ -151,7 +175,7 @@ function watchMould() {
 
                         console.log(
                             'Copied JavaScript successfully ' +
-                            `in ${s}s ${ns / 1e6}ms`
+                                `in ${s}s ${ns / 1e6}ms`
                         )
                     })
                     .catch((error) => {

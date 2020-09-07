@@ -1,19 +1,23 @@
 #!/usr/bin/env node
-'use strict';
+'use strict'
 
-var currentNodeVersion = process.versions.node;
-var semanticVersioning = currentNodeVersion.split('.');
-var major = Number(semanticVersioning[0]);
-var minor = Number(semanticVersioning[1]);
+var chalk = require('chalk')
+
+var currentNodeVersion = process.versions.node
+var semanticVersioning = currentNodeVersion.split('.')
+var major = Number(semanticVersioning[0])
+var minor = Number(semanticVersioning[1])
 
 // This node version check ensures that extremely old versions of node are not used.
 // These may not support ES2015 features such as const/let/async/await/etc.
 if (major < 10 || major === 11 || (major === 10 && minor < 13)) {
     console.error(
-        'Node.js version ' + currentNodeVersion + ' detected.\n' +
-        'The Mould requires a minimum Node.js version of either v10.13 or v12.0.\n'
-    );
-    process.exit(1);
+        chalk.yellow(
+            'Node.js version ' + currentNodeVersion + ' detected.\n' +
+            'Mould requires a minimum Node.js version of either v10.13 or v12.0.\n',
+        ),
+    )
+    process.exit(1)
 }
 
-require('esm')(module)('../cli');
+require('esm')(module)('../cli')

@@ -1,18 +1,20 @@
+import chalk from 'chalk'
 import spawn from 'cross-spawn'
 import fs from 'fs'
 
-import { MOULD_VERSION, paths } from '../constants'
+import { paths } from '../constants'
+import { version } from '../package.json'
 
-if (fs.existsSync(paths.mould.byVersionDirectory)) {
-    console.warn(`You already have mould@${MOULD_VERSION} installed.`)
+if (fs.existsSync(paths.editor.byVersionDirectory)) {
+    console.warn(`You already have mould@${version} installed.`)
     process.exit(0)
 }
 
-if (!fs.existsSync(paths.mould.directory)) {
-    fs.mkdirSync(paths.mould.directory)
+if (!fs.existsSync(paths.editor.directory)) {
+    fs.mkdirSync(paths.editor.directory)
 }
 
-const zipFile = `${MOULD_VERSION}.zip`
+const zipFile = `v${version}.zip`
 const url = `https://github.com/mouldjs/mould/archive/${zipFile}`
 
 const result = spawn.sync(
@@ -20,15 +22,21 @@ const result = spawn.sync(
     [
         '-c',
         [
-            `cd ${paths.mould.directory}`,
+            `cd ${paths.editor.directory}`,
             `curl -LOkSs ${url}`,
-            `unzip ${zipFile} -d ${MOULD_VERSION}`,
-            `rm ${zipFile}`
-        ].join(' && ')
+            `unzip -q ${zipFile}`,
+            `rm ${zipFile}`,
+            `mv mould-${version} ${version}`,
+            `cd ${version}`,
+            `yarn install`,
+        ].join(' && '),
     ],
     { stdio: 'inherit' }
 )
 
 if (result.status === 0) {
-    console.info(`\nInstalled mould@${MOULD_VERSION} successfully.`)
+    console.info(
+        `\nInstalled mould@${version} successfully ` +
+            `at ${chalk.green(paths.editor.directory)}`
+    )
 }

@@ -1,29 +1,50 @@
+import chalk from 'chalk'
 import fs from 'fs'
+import path from 'path'
 
-import { compileSchema, compileTs } from '../compilers'
 import { paths } from '../constants'
-import { copyByExtension, copyByExtensionWithExtensionReplacement, existsSyncWithExtension } from '../utils'
+import {
+    copyByExtension,
+    copyByExtensionWithExtensionReplacement,
+    existsSyncWithExtension,
+} from '../utils'
+
+function symlinkMould() {
+    //symlink mould
+    if (fs.existsSync(paths.mould.symlinkDirectory)) {
+        fs.unlinkSync(paths.mould.symlinkDirectory)
+    }
+    fs.symlinkSync(
+        paths.app.mouldDirectory,
+        paths.mould.symlinkDirectory,
+        'dir'
+    )
+}
 
 if (fs.existsSync(paths.app.schema)) {
+    symlinkMould()
     const time = process.hrtime()
 
     Promise.all([
-        compileSchema(paths.app.schema, paths.cli.components),
+        require('./compile').compileSchema(
+            paths.app.schema,
+            paths.mould.components
+        ),
         existsSyncWithExtension(paths.app.mouldDirectory, '.ts') &&
             copyByExtension(
                 paths.app.mouldDirectory,
-                paths.cli.componentsDirectory,
+                paths.mould.componentsDirectory,
                 '.ts'
             ),
         existsSyncWithExtension(paths.app.mouldDirectory, '.js') &&
             copyByExtensionWithExtensionReplacement(
                 paths.app.mouldDirectory,
-                paths.cli.componentsDirectory,
+                paths.mould.componentsDirectory,
                 '.js',
                 '.ts'
             ),
     ])
-        .then(compileTs)
+        .then(require('./compile').compileTs)
         .then(() => {
             const [s, ns] = process.hrtime(time)
 
@@ -37,16 +58,19 @@ if (fs.existsSync(paths.app.schema)) {
 } else if (fs.existsSync(paths.app.mouldDirectory)) {
     console.warn(
         `You don't have Mould Schema ` +
-        `at ${paths.app.mouldDirectory}\n\n` +
-        'You could begin by typing:\n\n' +
-        '  npx mould dev\n\n' +
-        'Or you could add mould dev to your package.json scripts\n'
+            `at ${chalk.green(paths.app.mouldDirectory)}\n\n` +
+            'You could begin by typing:\n\n' +
+            `  ${chalk.cyan('npx mould dev')}\n\n` +
+            `Or you could add ${chalk.cyan('mould dev')} to your ${chalk.green(
+                'package.json'
+            )} scripts\n`
     )
 } else {
     console.warn(
-        `You don't have ${path.basename(paths.app.mouldDirectory)} ` +
-        `initialized at ${paths.app.directory}\n\n` +
-        'You could start by typing:\n\n' +
-        '  npx mould init\n'
+        `You don't have ${chalk.green(
+            path.basename(paths.app.mouldDirectory)
+        )} initialized at ${chalk.green(paths.app.directory)}\n\n` +
+            'You could start by typing:\n\n' +
+            `  ${chalk.cyan('npx mould init')}\n`
     )
 }

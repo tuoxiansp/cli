@@ -3,16 +3,14 @@ import fs from 'fs'
 
 import { paths } from '../constants'
 
-if (!fs.existsSync(paths.mould.directory)) {
+if (!fs.existsSync(paths.editor.directory)) {
     console.warn(`You don't have mould installed.`)
     process.exit(0)
 }
 
-const result = spawn.sync(
-    'bash',
-    ['-c', `rm -rf ${paths.mould.directory}`],
-    { stdio: 'inherit' }
-)
+const result = spawn.sync('bash', ['-c', `rm -rf ${paths.editor.directory}`], {
+    stdio: 'inherit',
+})
 
 if (result.status === 0) {
     console.info('Uninstalled mould successfully.')

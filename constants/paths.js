@@ -2,15 +2,17 @@ import fs from 'fs'
 import os from 'os'
 import path from 'path'
 
-import { MOULD_VERSION } from '../constants'
+import packageJson from '../package.json'
 
 const appDirectory = process.cwd()
-const cliDirectory = path.join(__dirname, '..')
-const mouldDirectory = path.join(os.homedir(), '.mould')
+const mouldDirectory = path.join(__dirname, '..')
+const editorDirectory = path.join(os.homedir(), '.mould')
 
 const resolveApp = (relativePath) => path.resolve(appDirectory, relativePath)
-const resolveCli = (relativePath) => path.resolve(cliDirectory, relativePath)
-const resolveMould = (relativePath) => path.resolve(mouldDirectory, MOULD_VERSION, relativePath)
+const resolveMould = (relativePath) =>
+    path.resolve(mouldDirectory, relativePath)
+const resolveEditor = (relativePath) =>
+    path.resolve(editorDirectory, packageJson.version, relativePath)
 
 const useTs = fs.existsSync(resolveApp('tsconfig.json'))
 
@@ -19,22 +21,23 @@ export const app = {
     mouldDirectory: resolveApp('mould'),
     schema: resolveApp('mould/.mould'),
     resolvers: resolveApp(`mould/resolvers.${useTs ? 'ts' : 'js'}`),
-}
-
-export const cli = {
-    directory: cliDirectory,
-    componentsDirectory: resolveCli('.components'),
-    components: resolveCli('.components/index.tsx'),
+    setup: resolveApp(`mould/setup.${useTs ? 'ts' : 'js'}`),
 }
 
 export const mould = {
     directory: mouldDirectory,
-    byVersionDirectory: resolveMould('.'),
+    componentsDirectory: resolveMould('.components'),
+    components: resolveMould('.components/index.tsx'),
     symlinkDirectory: resolveMould('.mould'),
-    transform: resolveMould('compile/transform'),
+}
+
+export const editor = {
+    directory: editorDirectory,
+    byVersionDirectory: resolveEditor('.'),
+    symlinkDirectory: resolveEditor('.mould'),
 }
 
 export const bin = {
-    next: resolveMould('node_modules/.bin/next'),
+    next: resolveEditor('node_modules/.bin/next'),
     tsc: resolveMould('node_modules/.bin/tsc'),
 }
