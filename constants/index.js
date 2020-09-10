@@ -1,3 +1,1 @@
-import paths from './paths'
-
-export { paths }
+export { default as paths } from './paths'

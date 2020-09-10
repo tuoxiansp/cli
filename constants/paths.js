@@ -1,16 +1,9 @@
-import fs from 'fs'
-import path from 'path'
-
-const directory = process.cwd()
-
-const resolveApp = (relativePath) => path.resolve(directory, relativePath)
-
-const useTs = fs.existsSync(resolveApp('tsconfig.json'))
+import { resolvePath, useTs } from '../utils'
 
 export default {
-    directory: directory,
-    mouldDirectory: resolveApp('mould'),
-    schema: resolveApp('mould/.mould'),
-    resolvers: resolveApp(`mould/resolvers.${useTs ? 'ts' : 'js'}`),
-    setup: resolveApp(`mould/setup.${useTs ? 'ts' : 'js'}`),
+    rootDirectory: resolvePath('.'),
+    mouldDirectory: resolvePath('mould'),
+    schema: resolvePath('mould/.mould'),
+    resolvers: resolvePath(`mould/resolvers.${useTs() ? 'ts' : 'js'}`),
+    setup: resolvePath(`mould/setup.${useTs() ? 'ts' : 'js'}`),
 }
