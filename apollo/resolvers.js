@@ -1,19 +1,13 @@
 import fs from 'fs'
-import path from 'path'
+import paths from '../constants'
 
 const { readFile, writeFile } = fs.promises
 
 export const resolvers = {
     Query: {
         schemas: async () => {
-            if (!process.env.WORKDIR) {
-                throw Error('WORKDIR must be specified.')
-            }
             try {
-                return await readFile(
-                    path.join(process.env.WORKDIR, '.mould'),
-                    'utf8'
-                )
+                return await readFile(paths.app.schema, 'utf8')
             } catch {
                 return null
             }
@@ -22,11 +16,7 @@ export const resolvers = {
     },
     Mutation: {
         saveSchemas: async (parent, { schemas }) => {
-            await writeFile(
-                path.join(process.env.WORKDIR, '.mould'),
-                schemas,
-                'utf8'
-            )
+            await writeFile(paths.app.schema, schemas, 'utf8')
 
             return true
         },
