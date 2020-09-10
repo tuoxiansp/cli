@@ -49,8 +49,8 @@ if (!fs.existsSync(paths.setup)) {
 
 console.log(
     '\nYou could begin by typing:\n\n' +
-        `  ${chalk.cyan(`${useYarn() ? 'yarn' : 'npx'} mould dev`)}\n\n` +
-        `Or you could add ${chalk.cyan('mould dev')} to your ${chalk.green(
+        `  ${chalk.cyan(`${useYarn() ? 'yarn' : 'npx'} mould connect`)}\n\n` +
+        `Or you could add ${chalk.cyan('mould connect')} to your ${chalk.green(
             'package.json'
         )} scripts\n`
 )
