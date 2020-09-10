@@ -1,5 +1,5 @@
 import fs from 'fs'
-import paths from '../constants'
+import { paths } from '../constants'
 
 const { readFile, writeFile } = fs.promises
 

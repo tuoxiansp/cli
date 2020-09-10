@@ -4,7 +4,7 @@ import path from 'path'
 
 import { paths } from '../constants'
 
-if (!fs.existsSync(path.join(paths.app.directory, 'package.json'))) {
+if (!fs.existsSync(path.join(paths.directory, 'package.json'))) {
     console.error(
         `Please, run ${chalk.cyan(
             'npx mould init'
@@ -13,36 +13,36 @@ if (!fs.existsSync(path.join(paths.app.directory, 'package.json'))) {
     process.exit(1)
 }
 
-if (fs.existsSync(paths.app.mouldDirectory)) {
+if (fs.existsSync(paths.mouldDirectory)) {
     console.warn(
         `You already have ${chalk.green(
-            path.basename(paths.app.mouldDirectory)
-        )} initialized at ${chalk.green(paths.app.directory)}`
+            path.basename(paths.mouldDirectory)
+        )} initialized at ${chalk.green(paths.directory)}`
     )
 } else {
-    fs.mkdirSync(paths.app.mouldDirectory)
+    fs.mkdirSync(paths.mouldDirectory)
 
     console.log(
-        `Created ${chalk.green(path.basename(paths.app.mouldDirectory))} ` +
-            `directory at ${chalk.green(paths.app.directory)}`
+        `Created ${chalk.green(path.basename(paths.mouldDirectory))} ` +
+            `directory at ${chalk.green(paths.directory)}`
     )
 }
 
-if (!fs.existsSync(paths.app.resolvers)) {
-    fs.writeFileSync(paths.app.resolvers, 'export default {}')
+if (!fs.existsSync(paths.resolvers)) {
+    fs.writeFileSync(paths.resolvers, 'export default {}')
 
     console.log(
-        `Created ${chalk.green(path.basename(paths.app.resolvers))} ` +
-            `at ${chalk.green(paths.app.mouldDirectory)}`
+        `Created ${chalk.green(path.basename(paths.resolvers))} ` +
+            `at ${chalk.green(paths.mouldDirectory)}`
     )
 }
 
-if (!fs.existsSync(paths.app.setup)) {
-    fs.writeFileSync(paths.app.setup, 'export default () => ({})')
+if (!fs.existsSync(paths.setup)) {
+    fs.writeFileSync(paths.setup, 'export default () => ({})')
 
     console.log(
-        `Created ${chalk.green(path.basename(paths.app.setup))} ` +
-            `at ${chalk.green(paths.app.mouldDirectory)}`
+        `Created ${chalk.green(path.basename(paths.setup))} ` +
+            `at ${chalk.green(paths.mouldDirectory)}`
     )
 }
 

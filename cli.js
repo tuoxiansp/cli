@@ -4,7 +4,7 @@ import spawn from 'cross-spawn'
 
 import packageJson from './package.json'
 
-const commands = ['build', 'connect', 'dev', 'init', 'install', 'uninstall']
+const commands = ['connect', 'init']
 
 const args = arg(
     {
