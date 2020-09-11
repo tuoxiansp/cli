@@ -1,6 +1,23 @@
 import { ApolloServer } from 'apollo-server-express'
-import { schema } from '../apollo/schema'
+import chalk from 'chalk'
 import express from 'express'
+import fs from 'fs'
+import path from 'path'
+
+import { schema } from '../apollo/schema'
+import { paths } from '../constants'
+import { useYarn } from '../utils'
+
+if (!fs.existsSync(paths.mouldDirectory)) {
+    console.warn(
+        `You don't have ${chalk.green(
+            path.basename(paths.mouldDirectory)
+        )} initialized at ${chalk.green(paths.rootDirectory)}\n\n` +
+            'You could set it up by typing:\n\n' +
+            `  ${chalk.cyan(`${useYarn() ? 'yarn' : 'npx'} mould init`)}\n`
+    )
+    process.exit(1)
+}
 
 const app = express()
 
