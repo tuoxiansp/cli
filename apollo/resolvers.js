@@ -7,7 +7,7 @@ export const resolvers = {
     Query: {
         schemas: async () => {
             try {
-                return await readFile(paths.app.schema, 'utf8')
+                return await readFile(paths.schema, 'utf8')
             } catch {
                 return null
             }
@@ -16,7 +16,7 @@ export const resolvers = {
     },
     Mutation: {
         saveSchemas: async (parent, { schemas }) => {
-            await writeFile(paths.app.schema, schemas, 'utf8')
+            await writeFile(paths.schema, schemas, 'utf8')
 
             return true
         },
