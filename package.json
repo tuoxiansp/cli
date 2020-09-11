@@ -1,6 +1,6 @@
 {
     "name": "@mouldjs/cli",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "description": "Mould CLI",
     "repository": "https://github.com/mouldjs/cli.git",
     "keywords": [
