@@ -5,15 +5,6 @@ import path from 'path'
 import { paths } from '../constants'
 import { useYarn } from '../utils'
 
-if (!fs.existsSync(path.join(paths.rootDirectory, 'package.json'))) {
-    console.error(
-        `Please, run ${chalk.cyan(
-            `${useYarn() ? 'yarn' : 'npx'} mould init`
-        )} within your project directory`
-    )
-    process.exit(1)
-}
-
 if (fs.existsSync(paths.mouldDirectory)) {
     console.warn(
         `You already have ${chalk.green(
