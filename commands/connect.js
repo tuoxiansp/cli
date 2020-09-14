@@ -6,7 +6,7 @@ import path from 'path'
 
 import { schema } from '../apollo/schema'
 import { paths } from '../constants'
-import { useYarn } from '../utils'
+import { mould, yarn } from '../scripts'
 
 if (!fs.existsSync(paths.mouldDirectory)) {
     console.warn(
@@ -14,7 +14,7 @@ if (!fs.existsSync(paths.mouldDirectory)) {
             path.basename(paths.mouldDirectory)
         )} initialized at ${chalk.green(paths.rootDirectory)}\n\n` +
             'You could set it up by typing:\n\n' +
-            `  ${chalk.cyan(`${useYarn() ? 'yarn' : 'npx'} mould init`)}\n`
+            `  ${chalk.cyan(yarn(mould('init')))}\n`
     )
     process.exit(1)
 }

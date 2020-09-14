@@ -3,12 +3,12 @@ import fs from 'fs'
 import path from 'path'
 
 import { paths } from '../constants'
-import { useYarn } from '../utils'
+import { mould, yarn } from '../scripts'
 
-if (!fs.existsSync(path.join(paths.rootDirectory, 'package.json'))) {
+if (!fs.existsSync(path.resolve(process.cwd(), 'package.json'))) {
     console.error(
         `Please, run ${chalk.cyan(
-            `${useYarn() ? 'yarn' : 'npx'} mould init`
+            yarn(mould('init'))
         )} within your project directory`
     )
     process.exit(1)
@@ -49,8 +49,8 @@ if (!fs.existsSync(paths.setup)) {
 
 console.log(
     '\nYou could begin by typing:\n\n' +
-        `  ${chalk.cyan(`${useYarn() ? 'yarn' : 'npx'} mould connect`)}\n\n` +
-        `Or you could add ${chalk.cyan('mould connect')} to your ${chalk.green(
+        `  ${chalk.cyan(yarn(mould('connect')))}\n\n` +
+        `Or you could add ${chalk.cyan(mould('connect'))} to your ${chalk.green(
             'package.json'
         )} scripts\n`
 )
