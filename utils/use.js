@@ -1,10 +1,10 @@
 import fs from 'fs'
-import resolvePath from './resolvePath'
+import path from 'path'
 
 export function useTs() {
-    return fs.existsSync(resolvePath('tsconfig.json'))
+    return fs.existsSync(path.resolve(process.cwd(), 'tsconfig.json'))
 }
 
 export function useYarn() {
-    return fs.existsSync(resolvePath('yarn.lock'))
+    return fs.existsSync(path.resolve(process.cwd(), 'yarn.lock'))
 }

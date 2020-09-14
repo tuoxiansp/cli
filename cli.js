@@ -29,7 +29,7 @@ if (args['--version']) {
 if (args['--help'] || !args._.length) {
     console.log(`
     Usage:
-      $ mould <command>
+      $ mould <command> [workdir]
 
     Available commands:
       ${commands.join(', ')}
@@ -41,13 +41,13 @@ if (args['--help'] || !args._.length) {
     process.exit(0)
 }
 
-const [command] = args._
+const [command, workdir = '.'] = args._
 
 if (commands.includes(command)) {
     const result = spawn.sync(
         'node',
         ['-r', 'esm', require.resolve(`./commands/${command}`)],
-        { stdio: 'inherit' }
+        { env: { ...process.env, WORKDIR: workdir }, stdio: 'inherit' }
     )
 
     if (result.signal) {
