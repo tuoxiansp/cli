@@ -23,7 +23,13 @@ const app = express()
 
 const server = new ApolloServer({ schema })
 
-server.applyMiddleware({ app, path: '/api/graphql' })
+server.applyMiddleware({
+    app,
+    path: '/api/graphql',
+    bodyParserConfig: {
+        limit: '100mb',
+    },
+})
 
 app.listen({ port: 4000 }, () =>
     console.log(`🚀 Server ready at http://localhost:4000${server.graphqlPath}`)
