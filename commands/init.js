@@ -21,7 +21,7 @@ if (fs.existsSync(paths.mouldDirectory)) {
         )} initialized at ${chalk.green(paths.rootDirectory)}`
     )
 } else {
-    fs.mkdirSync(paths.mouldDirectory)
+    fs.mkdirSync(paths.mouldDirectory, { recursive: true })
 
     console.log(
         `Created ${chalk.green(path.basename(paths.mouldDirectory))} ` +
